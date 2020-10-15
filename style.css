@@ -1,0 +1,46 @@
+* {
+    transition: all 200ms;
+}
+
+body {
+    background: black;
+    font-family: monospace;
+    font-size: 16px;
+    margin: 48px;
+    color: #ffdcbc;
+}
+
+header {
+    text-align: center;
+}
+
+h1 {
+    font-size: 5em
+}
+
+h2 {
+    font-size: 3em;
+    line-height: 0.2em;
+}
+
+h1,
+h2 {
+    color: orange;
+    font-family: 'Caveat', cursive;
+}
+
+a {
+    color: lightblue;
+}
+
+a:visited {
+    color: lightcyan;
+}
+
+a:hover {
+    color: lightsteelblue;
+}
+
+a:active {
+    color: lightslategray;
+}
