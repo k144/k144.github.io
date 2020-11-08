@@ -16,19 +16,10 @@ header {
     text-align: center;
 }
 
-h1 {
-    font-size: 3em;
-    
-}
-
-h2 {
-    font-size: 2em;
-}
-
 h1,
 h2 {
     color: orange;
-    font-family: 'Caveat', cursive;
+    font-family: 'Playfair Display', 'Times New Roman', Times, serif;
 }
 
 a:link {
@@ -49,6 +40,21 @@ a:active {
 
 p {
     line-height: 1.5em;
+}
+
+input[type=text] {
+    background: #222222;
+    border: none;
+    border-bottom: 1px solid #ffdcbc;
+    color: #ffdcbc;
+    margin: 4px 0;
+    padding: 8px;
+}
+
+input[type=text]:focus {
+    color: white;
+    background: #333333;
+    outline: none;
 }
 
 @media only screen and (min-width: 700px) {
