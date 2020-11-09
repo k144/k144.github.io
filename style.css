@@ -22,6 +22,10 @@ h2 {
     font-family: 'Playfair Display', 'Times New Roman', Times, serif;
 }
 
+a {
+    text-decoration-line: none;
+}
+
 a:link {
     color: lightcyan;
 }
