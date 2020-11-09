@@ -3,13 +3,12 @@ body {
     color: #ffdcbc;
     font-family: sans-serif;
     font-size: 16px;
-    margin: 1em;
+    margin: 16px;
 }
 
 main {
     max-width: 700px;
     margin: 0 auto;
-    padding: 2em;
 }
 
 header {
@@ -79,6 +78,9 @@ input[type=text]:focus {
  }
 
 @media only screen and (min-width: 700px) {
+    main {
+        padding: 32px;
+    }
     h1 {
         font-size: 5em;
     }
