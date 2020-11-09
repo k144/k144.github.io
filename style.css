@@ -74,6 +74,10 @@ input[type=text]:focus {
     color: #000000dd;
 }
 
+ #noscript a:visited {
+    color: rebeccapurple;
+ }
+
 @media only screen and (min-width: 700px) {
     h1 {
         font-size: 5em;
