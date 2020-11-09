@@ -16,6 +16,13 @@ header {
     text-align: center;
 }
 
+footer {
+    max-width: 700px;
+    display: flex;
+    justify-content: space-between;
+    margin: 32px auto 16px auto;
+}
+
 h1,
 h2 {
     color: orange;
@@ -59,6 +66,12 @@ input[type=text]:focus {
     color: white;
     background: #333333;
     outline: none;
+}
+
+#noscript {
+    padding: 24px;
+    background-color: orange;
+    color: #000000dd;
 }
 
 @media only screen and (min-width: 700px) {
