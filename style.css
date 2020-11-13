@@ -66,6 +66,8 @@ p {
 
 hr {
     color: #ffdcbc;
+    margin-top: 48px;
+    margin-bottom: 48px;
 }
 
 input[type=text] {
