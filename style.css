@@ -15,6 +15,18 @@ header {
     text-align: center;
 }
 
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 48px 0 16px 0;
+    width: 100%;
+}
+
+nav a {
+    margin: 12px 24px;
+}
+
 footer {
     max-width: 700px;
     display: flex;
