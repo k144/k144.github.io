@@ -1,0 +1,15 @@
+#kalkulator {
+    margin: 48px 0;
+}
+
+#input div {
+    display: flex;
+    flex-direction: column;
+    margin: 16px 0;
+}
+
+#wynik {
+    font-size: 2em;
+    line-height: 1.5em;
+    height: 1.5em;
+}
