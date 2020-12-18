@@ -172,16 +172,17 @@ function infix() {
     let tokenizedPost = [];
     let len = tokenized.length;
     let tempTokenized = [tokenized[0]];
-    for (let i = 1; i<len-1; i++) {
-        // TODO: Dodać mnożenie
-        if (tokenized[i][0] == "(" && tokenized[i-1][0] != ")") {
 
-        } else if (tokenized[i+1] == ")") {
-
-
+    for (let i = 1; i<len; i++) {
+        if (tokenized[i-1][0] == ")" && tokenized[i][1] == Types.NUMBER) {
+            tempTokenized.push(["*", Types.OPERATOR]);
+        } else if (tokenized[i-1][1] == Types.NUMBER && tokenized[i][0] == "(") {
+            tempTokenized.push(["*", Types.OPERATOR]);
         }
         tempTokenized.push(tokenized[i]);
     }
+
+    tokenized = [...tempTokenized];
     for (let it of tokenized) {
         let val = it[0]
         let top = stack[stack.length - 1];
@@ -260,3 +261,5 @@ function calculatePostfix(expr) {
         return stack[0][0];
     }
 }
+
+infix();
