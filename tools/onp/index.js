@@ -126,6 +126,8 @@ function tokenize(str) {
             case Types.WHITESPACE:
                 continue;
             case Types.BRACKET:
+                push(buf);
+                buf = c;
                 break;
             default:
                 buf = "";
@@ -174,9 +176,11 @@ function infix() {
     let tempTokenized = [tokenized[0]];
 
     for (let i = 1; i<len; i++) {
-        if (tokenized[i-1][0] == ")" && tokenized[i][1] == Types.NUMBER) {
-            tempTokenized.push(["*", Types.OPERATOR]);
-        } else if (tokenized[i-1][1] == Types.NUMBER && tokenized[i][0] == "(") {
+        if (
+            (tokenized[i-1][0] == ")" && tokenized[i][1] == Types.NUMBER) ||
+            (tokenized[i-1][1] == Types.NUMBER && tokenized[i][0] == "(") ||
+            (tokenized[i-1][0] == ")" && tokenized[i][0] == "(")
+           ) {
             tempTokenized.push(["*", Types.OPERATOR]);
         }
         tempTokenized.push(tokenized[i]);
