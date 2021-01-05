@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPN calculator</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="./src/style.css">
+    <script defer src="./src/index.js"></script>
+</head>
+<body>
+    <noscript>
+        <div id="noscript">
+            <p>This site doesn't collect any data and doesn't have ads. All the scripts are used solely for the main functionality of the site and are <a href="https://github.com/k144/tools/">publicly available</a>.</p>
+            <p><b>Disable JavaScript blocking if you want to use this tool.</b></p>
+        </div>
+    </noscript>
+    <main>
+        <div id="linkbar">
+            <a href="/en.html"> &lt;- back home</a>
+            <a href="/narzędzia/onp" class="lang">po polsku</a>
+        </div>
+        <h3>Reverse Polish notation calculator</h3>
+        <p>Insert an equation in any notation and the others will generate automatically.<br>In pre- and postfix notation, make sure to separate neighboring numbers with a space.</p>
+        <div id="kalkulator">
+            <div id="input">
+                <div>
+                    <label>Infix notation / normal</label>
+                    <input type="text" id="infix" value="(2+3)*5" autocomplete="off">
+                </div>
+                <div>
+                    <label>Prefix notation / Polish notation</label>
+                    <input type="text" id="prefix">
+                <div>
+                    <label><b>Postfix notation / reverse Polish notation</b></label>
+                    <input type="text" id="postfix">
+                </div>
+                </div>
+            </div>
+            <p id="wynik"></p>
+            <div id="wizualizacja"></div>
+        </div>
+    </main>
+    <footer>
+        <p>Jakub Nowak</p>
+        <p>5 January 2021</p>
+        <p><a href="https://github.com/k144/k144.github.io/tree/master/tools/onp">source code</a></p>
+    </footer>
+</body>
+</html>

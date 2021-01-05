@@ -27,6 +27,11 @@ nav a {
     margin: 12px 24px;
 }
 
+#linkbar {
+    margin: 1em auto;
+    height: 1em;
+}
+
 footer {
     max-width: 700px;
     display: flex;
@@ -83,6 +88,14 @@ input[type=text]:focus {
     color: white;
     background: #333333;
     outline: none;
+}
+
+.lang {
+    float: right;
+}
+
+.lang a {
+    display: inline-block;
 }
 
 #noscript {
