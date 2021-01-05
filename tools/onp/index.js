@@ -54,8 +54,12 @@ function strToNumber(str) {
 
 }
 
-function stackToStr(stack) {
-    result = stack.map((el) => el[0]).join(" ");
+function stackToStr(stack, spaces=true) {
+    if (spaces) {
+        result = stack.map((el) => el[0]).join(" ");
+    } else {
+        result = stack.map((el) => el[0]).join("");
+    }
     if (pl) {
         result = result.replace('.', ',');
     }
@@ -219,7 +223,7 @@ function infix() {
         tokenizedPost.push(elm);
     }
 
-    resultElm.innerText = "= " + calculatePostfix(tokenizedPost);
+    resultElm.innerText = "= " + solvePostfix(tokenizedPost);
     postfixElm.value = stackToStr(tokenizedPost);
     prefixElm.value = stackToStr(tokenizedPost.reverse());
 }
@@ -230,8 +234,9 @@ function prefix() {
         return;
     }
     let tokenizedPost = tokenize(prefixElm.value).reverse();
-    resultElm.innerText = "= " + calculatePostfix(tokenizedPost);
+    resultElm.innerText = "= " + solvePostfix(tokenizedPost);
     postfixElm.value = stackToStr(tokenizedPost);
+    infixElm.value = stackToStr(PostToIn(tokenizedPost), false);
 }
 
 function postfix() {
@@ -240,12 +245,14 @@ function postfix() {
         return;
     }
     let tokenizedPost = tokenize(postfixElm.value);
-    resultElm.innerText = "= " + calculatePostfix(tokenizedPost);
-    calculatePostfix(tokenizedPost);
-    prefixElm.value = stackToStr(tokenizedPost.reverse());
+    resultElm.innerText = "= " + solvePostfix(tokenizedPost);
+    solvePostfix(tokenizedPost);
+    infixElm.value = stackToStr(PostToIn(tokenizedPost), false);
+    let tokenizedPre = tokenizedPost.reverse();
+    prefixElm.value = stackToStr(tokenizedPre);
 }
 
-function calculatePostfix(expr) {
+function solvePostfix(expr) {
     let stack = []
     for (let it of expr) {
         switch(it[1]) {
@@ -264,6 +271,40 @@ function calculatePostfix(expr) {
     } else {
         return stack[0][0];
     }
+}
+
+
+function PostToIn(expr) {
+    let len = expr.length;
+    let stack = [];
+    for (let i=0; i<len; i++) {
+        let it = expr[i];
+        if (it[1] == Types.NUMBER) {
+            stack.push({val: it});
+        } else {
+            let b = stack.pop();
+            let a = stack.pop();
+            stack.push({val: it, nodeA: a, nodeB: b});
+        }
+
+    }
+    let tree = stack[0];
+    let result = [];
+    function unwind(node) {
+        if (node.val[1] == Types.OPERATOR) {
+            result.push(["(", Types.BRACKET]);
+            unwind(node.nodeA);
+            result.push(node.val);
+            unwind(node.nodeB);
+            result.push([")", Types.BRACKET]);
+        } else {
+            result.push(node.val);
+        }
+
+    }
+    unwind(tree);
+    return result;
+
 }
 
 infix();
