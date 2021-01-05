@@ -159,14 +159,7 @@ function precedence(c) {
             return -1;
     }
 }
-let priority = new Map([ 
-    ['(', 0],
-    ['+', 1],
-    ['-', 1],
-    ['*', 2],
-    ['/', 2],
-    ['^', 3],
- ])
+
 function infix() {
     if (infixElm.value == 0) {
         clearAll();
@@ -290,13 +283,19 @@ function PostToIn(expr) {
     }
     let tree = stack[0];
     let result = [];
-    function unwind(node) {
+    function unwind(node, parentPrec) {
+        let prec = precedence(node.val[0]);
+        let brackets = parentPrec > prec ? true : false;
         if (node.val[1] == Types.OPERATOR) {
-            result.push(["(", Types.BRACKET]);
-            unwind(node.nodeA);
+            if (brackets) {
+                result.push(["(", Types.BRACKET]);
+            }
+            unwind(node.nodeA, prec);
             result.push(node.val);
-            unwind(node.nodeB);
-            result.push([")", Types.BRACKET]);
+            unwind(node.nodeB, prec);
+            if (brackets) {
+                result.push([")", Types.BRACKET]);
+            }
         } else {
             result.push(node.val);
         }
