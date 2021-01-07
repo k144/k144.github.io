@@ -7,7 +7,7 @@ postfixElm.addEventListener("input", postfix);
 let resultElm = document.getElementById("wynik");
 let pl = document.documentElement.lang == "pl";
 
-const Types = {OPERATOR: 0, NUMBER: 1, WHITESPACE: 2, BRACKET: 3};
+const Types = {OPERATOR: 0, OPERAND: 1, WHITESPACE: 2, BRACKET: 3};
 
 
 function getCharType(c) {
@@ -15,12 +15,10 @@ function getCharType(c) {
         return Types.WHITESPACE;
     } else if (c == '(' || c == ')') {
         return Types.BRACKET;
-    } else if (c >= '0' && c <= '9' || c == '.' || c == ',') {
-        return Types.NUMBER;
     } else if ("+-*/^".includes(c)) {
         return Types.OPERATOR;
     } else {
-        console.log("Błąd - zły znak", c);
+        return Types.OPERAND;
     }
 }
 
@@ -80,8 +78,13 @@ function tokenize(str) {
     let type = undefined;
     function push(str) {
         if (str.length > 0) {
-            if (lastType == Types.NUMBER) {
-                result.push([strToNumber(str), lastType])
+            if (lastType == Types.OPERAND) {
+                let num = strToNumber(str);
+                if (String(num) == str) {
+                    result.push([num, lastType]);
+                } else {
+                    result.push([str, lastType]);
+                }
             } else {
                 result.push([str, lastType]);
             }
@@ -102,7 +105,7 @@ function tokenize(str) {
                 buf = c;
                 lastType = type;
                 continue;
-            case Types.NUMBER:
+            case Types.OPERAND:
                 buf = c;
                 break;
             case Types.WHITESPACE:
@@ -124,7 +127,7 @@ function tokenize(str) {
                 push(buf);
                 buf = c;
                 continue;
-            case Types.NUMBER:
+            case Types.OPERAND:
                 buf += c;
                 break;
             case Types.WHITESPACE:
@@ -174,8 +177,8 @@ function infix() {
 
     for (let i = 1; i<len; i++) {
         if (
-            (tokenized[i-1][0] == ")" && tokenized[i][1] == Types.NUMBER) ||
-            (tokenized[i-1][1] == Types.NUMBER && tokenized[i][0] == "(") ||
+            (tokenized[i-1][0] == ")" && tokenized[i][1] == Types.OPERAND) ||
+            (tokenized[i-1][1] == Types.OPERAND && tokenized[i][0] == "(") ||
             (tokenized[i-1][0] == ")" && tokenized[i][0] == "(")
            ) {
             tempTokenized.push(["*", Types.OPERATOR]);
@@ -187,7 +190,7 @@ function infix() {
     for (let it of tokenized) {
         let val = it[0]
         let top = stack[stack.length - 1];
-        if (it[1] == Types.NUMBER) {
+        if (it[1] == Types.OPERAND) {
             tokenizedPost.push(it);
         } else if (val == '(') {
             stack.push(it);
@@ -216,7 +219,7 @@ function infix() {
         tokenizedPost.push(elm);
     }
 
-    resultElm.innerText = "= " + solvePostfix(tokenizedPost);
+    solvePostfix(tokenizedPost);
     postfixElm.value = stackToStr(tokenizedPost);
     prefixElm.value = stackToStr(tokenizedPost.reverse());
 }
@@ -227,7 +230,7 @@ function prefix() {
         return;
     }
     let tokenizedPost = tokenize(prefixElm.value).reverse();
-    resultElm.innerText = "= " + solvePostfix(tokenizedPost);
+    solvePostfix(tokenizedPost);
     postfixElm.value = stackToStr(tokenizedPost);
     infixElm.value = stackToStr(PostToIn(tokenizedPost), false);
 }
@@ -238,7 +241,6 @@ function postfix() {
         return;
     }
     let tokenizedPost = tokenize(postfixElm.value);
-    resultElm.innerText = "= " + solvePostfix(tokenizedPost);
     solvePostfix(tokenizedPost);
     infixElm.value = stackToStr(PostToIn(tokenizedPost), false);
     let tokenizedPre = tokenizedPost.reverse();
@@ -249,21 +251,29 @@ function solvePostfix(expr) {
     let stack = []
     for (let it of expr) {
         switch(it[1]) {
-        case Types.NUMBER:
+        case Types.OPERAND:
+            if (isNaN(it[0])) {
+                resultElm.innerText = "";
+                return;
+            }
             stack.push(it);
             break;
         case Types.OPERATOR:
             let b = stack.pop()[0];
             let a = stack.pop()[0];
-            stack.push([opCallback.get(it[0])(a,b), Types.NUMBER]);
+            stack.push([opCallback.get(it[0])(a,b), Types.OPERAND]);
         }
 
     }
+    let result;
     if (pl) {
-        return stack[0][0].toString().replace('.', ',');
+        result = stack[0][0].toString().replace('.', ',');
     } else {
-        return stack[0][0];
+        result = stack[0][0];
     }
+
+    resultElm.innerText = "= " + result;
+
 }
 
 
@@ -272,7 +282,7 @@ function PostToIn(expr) {
     let stack = [];
     for (let i=0; i<len; i++) {
         let it = expr[i];
-        if (it[1] == Types.NUMBER) {
+        if (it[1] == Types.OPERAND) {
             stack.push({val: it});
         } else {
             let b = stack.pop();
