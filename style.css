@@ -78,16 +78,15 @@ hr {
 input[type=text] {
     background: #222222;
     border: none;
-    border-bottom: 1px solid #ffdcbc;
     color: #ffdcbc;
-    margin: 4px 0;
+    margin: 8px 0;
     padding: 8px;
+    outline: 1px solid #333;
 }
 
 input[type=text]:focus {
-    color: white;
-    background: #333333;
-    outline: none;
+    background: black;
+    outline: 1px solid #ffdcbc;
 }
 
 .lang {
