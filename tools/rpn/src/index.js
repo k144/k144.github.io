@@ -32,22 +32,18 @@ let opCallback = new Map([
 
 
 function strToNumber(str) {
-    if (pl) {
-        let parsable = "";
-        let arr = str.split('');
-        for (c of arr) {
-            switch (c) {
-            case '.':
-                continue;
-            case ',':
-                c = '.';
-                break;
-            }
-            parsable += c;
-        }
-        return parseFloat(parsable);
+    if (/^[0-9\.\,]+$/.test(str) == false) {
+        return NaN;
     }
-    return parseFloat(str);
+    if (pl) {
+        return parseFloat(
+            str
+            .replaceAll('.', '')
+            .replaceAll(',', '.')
+        );
+    }
+
+    return parseFloat(str.replaceAll(',', ''));
 
 
 }
@@ -77,19 +73,26 @@ function tokenize(str) {
     let lastType = undefined;
     let type = undefined;
     function push(str) {
-        if (str.length > 0) {
-            if (lastType == Types.OPERAND) {
-                let num = strToNumber(str);
-                if (String(num) == str) {
-                    result.push([num, lastType]);
-                } else {
-                    result.push([str, lastType]);
-                }
-            } else {
-                result.push([str, lastType]);
-            }
+
+        if (str.length == 0) {
+            return;
         }
+
+        if (lastType == Types.OPERAND) {
+            let num = strToNumber(str);
+            console.log(num);
+            if (isNaN(num)) {
+                result.push([str, lastType]);
+            } else {
+                result.push([num, lastType]);
+            }
+            return
+        }
+
+        result.push([str, lastType]);
+
     }
+
     for (let c of str.split("")) {
         type = getCharType(c);
         if (type != lastType) {
