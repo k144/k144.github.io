@@ -13,3 +13,7 @@
     line-height: 1.5em;
     height: 1.5em;
 }
+
+input[type=text] {
+    word-spacing: 0.5em;
+}
