@@ -225,18 +225,22 @@ function solvePostfix(expr) {
     let stack = [];
 
     for (let it of expr) {
-        switch(it[1]) {
-        case Types.OPERAND:
+        console.table(stack);
+        if (it[1] == Types.OPERAND) {
             if (isNaN(it[0])) {
                 resultElm.innerText = "";
                 return;
             }
             stack.push(it);
-            break;
-        case Types.OPERATOR:
-            let b = stack.pop()[0];
-            let a = stack.pop()[0];
-            stack.push([opCallback.get(it[0])(a,b), Types.OPERAND]);
+        } else { // operator
+            let b = stack.pop();
+            let a = stack.pop();
+            if (a == undefined) {
+                resultElm.innerText = "";
+                stack.push(b);
+                break;
+            }
+            stack.push([opCallback.get(it[0])(a[0],b[0]), Types.OPERAND]);
         }
     }
 
