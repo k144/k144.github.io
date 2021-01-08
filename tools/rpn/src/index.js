@@ -9,6 +9,15 @@ let pl = document.documentElement.lang == "pl";
 
 const Types = {OPERATOR: 0, OPERAND: 1, WHITESPACE: 2, BRACKET: 3};
 
+// non-destructive, unlike Array.prototype.reverse()
+function reverse(arr) {
+    const len = arr.length;
+    let result = new Array(len);
+    for (let i = 0; i < len; i++) {
+        result[i] = arr[len-i-1];
+    }
+    return result;
+}
 
 function getCharType(c) {
     if (c == " ") {
@@ -234,7 +243,7 @@ function infix() {
 
     solvePostfix(tokenizedPost);
     postfixElm.value = stackToStr(tokenizedPost);
-    prefixElm.value = stackToStr(tokenizedPost.reverse());
+    prefixElm.value = stackToStr(reverse(tokenizedPost));
 
 }
 
@@ -244,10 +253,10 @@ function prefix() {
         clearAll();
         return;
     }
-    let tokenizedPost = tokenize(prefixElm.value).reverse();
-    solvePostfix(tokenizedPost);
+    let tokenizedPost = reverse(tokenize(prefixElm.value))
     postfixElm.value = stackToStr(tokenizedPost);
     infixElm.value = stackToStr(PostToIn(tokenizedPost), false);
+    solvePostfix(tokenizedPost);
 }
 
 
@@ -257,10 +266,9 @@ function postfix() {
         return;
     }
     let tokenizedPost = tokenize(postfixElm.value);
-    solvePostfix(tokenizedPost);
+    prefixElm.value = stackToStr(reverse(tokenizedPost));
     infixElm.value = stackToStr(PostToIn(tokenizedPost), false);
-    let tokenizedPre = tokenizedPost.reverse();
-    prefixElm.value = stackToStr(tokenizedPre);
+    solvePostfix(tokenizedPost);
 }
 
 
