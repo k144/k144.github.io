@@ -4,7 +4,7 @@ let postfixElm = document.getElementById("postfix");
 prefixElm.addEventListener("input", prefix);
 infixElm.addEventListener("input", infix);
 postfixElm.addEventListener("input", postfix);
-let resultElm = document.getElementById("wynik");
+let resultElm = document.getElementById("result");
 let pl = document.documentElement.lang == "pl";
 
 const Types = {OPERATOR: 0, OPERAND: 1, WHITESPACE: 2, BRACKET: 3};
@@ -32,9 +32,11 @@ let opCallback = new Map([
 
 
 function strToNumber(str) {
+
     if (/^[0-9\.\,]+$/.test(str) == false) {
         return NaN;
     }
+
     if (pl) {
         return parseFloat(
             str
@@ -45,20 +47,25 @@ function strToNumber(str) {
 
     return parseFloat(str.replaceAll(',', ''));
 
-
 }
 
+
 function stackToStr(stack, spaces=true) {
+
     if (spaces) {
         result = stack.map((el) => el[0]).join(" ");
     } else {
         result = stack.map((el) => el[0]).join("");
     }
+
     if (pl) {
         result = result.replace('.', ',');
     }
+
     return result;
+
 }
+
 
 function clearAll() {
     prefixElm.value = "";
@@ -67,11 +74,14 @@ function clearAll() {
     resultElm.innerText = "";
 }
 
+
 function tokenize(str) {
+
     result = [];
     let buf = "";
     let lastType = undefined;
     let type = undefined;
+
     function push(str) {
 
         if (str.length == 0) {
@@ -80,13 +90,12 @@ function tokenize(str) {
 
         if (lastType == Types.OPERAND) {
             let num = strToNumber(str);
-            console.log(num);
             if (isNaN(num)) {
                 result.push([str, lastType]);
             } else {
                 result.push([num, lastType]);
             }
-            return
+            return;
         }
 
         result.push([str, lastType]);
@@ -95,35 +104,7 @@ function tokenize(str) {
 
     for (let c of str.split("")) {
         type = getCharType(c);
-        if (type != lastType) {
-            if (lastType == undefined && type != Types.WHITESPACE) {
-                buf = c;
-                lastType = type;
-                continue;
-            }
-            push(buf);
-
-            switch (type) {
-            case Types.OPERATOR:
-                buf = c;
-                lastType = type;
-                continue;
-            case Types.OPERAND:
-                buf = c;
-                break;
-            case Types.WHITESPACE:
-                buf = "";
-                lastType = type;
-                continue;
-            case Types.BRACKET:
-                buf = c;
-                lastType = type;
-                continue;
-            default:
-                buf = "";
-                continue;
-            }
-        } else {
+        if (type == lastType) {
             switch (type) {
             case Types.OPERATOR:
                 lastType = type;
@@ -143,13 +124,40 @@ function tokenize(str) {
                 buf = "";
                 continue;
             }
-
+        } else {
+            if (lastType == undefined && type != Types.WHITESPACE) {
+                buf = c;
+                lastType = type;
+                continue;
+            }
+            push(buf);
+            switch (type) {
+            case Types.OPERATOR:
+                buf = c;
+                lastType = type;
+                continue;
+            case Types.OPERAND:
+                buf = c;
+                break;
+            case Types.WHITESPACE:
+                buf = "";
+                lastType = type;
+                continue;
+            case Types.BRACKET:
+                buf = c;
+                lastType = type;
+                continue;
+            default:
+                buf = "";
+                continue;
+            }
         }
         lastType = type;
     }
     push(buf);
     return result;
 }
+
 
 function precedence(c) {
     switch (c) {
@@ -166,6 +174,7 @@ function precedence(c) {
     }
 }
 
+
 function infix() {
     if (infixElm.value == 0) {
         clearAll();
@@ -179,6 +188,7 @@ function infix() {
     let tempTokenized = [tokenized[0]];
 
     for (let i = 1; i<len; i++) {
+        // implicid multiplication
         if (
             (tokenized[i-1][0] == ")" && tokenized[i][1] == Types.OPERAND) ||
             (tokenized[i-1][1] == Types.OPERAND && tokenized[i][0] == "(") ||
@@ -191,7 +201,7 @@ function infix() {
 
     tokenized = [...tempTokenized];
     for (let it of tokenized) {
-        let val = it[0]
+        let val = it[0];
         let top = stack[stack.length - 1];
         if (it[1] == Types.OPERAND) {
             tokenizedPost.push(it);
@@ -225,7 +235,9 @@ function infix() {
     solvePostfix(tokenizedPost);
     postfixElm.value = stackToStr(tokenizedPost);
     prefixElm.value = stackToStr(tokenizedPost.reverse());
+
 }
+
 
 function prefix() {
     if (prefixElm.value == 0) {
@@ -237,6 +249,7 @@ function prefix() {
     postfixElm.value = stackToStr(tokenizedPost);
     infixElm.value = stackToStr(PostToIn(tokenizedPost), false);
 }
+
 
 function postfix() {
     if (postfixElm.value == 0) {
@@ -250,8 +263,11 @@ function postfix() {
     prefixElm.value = stackToStr(tokenizedPre);
 }
 
+
 function solvePostfix(expr) {
-    let stack = []
+
+    let stack = [];
+
     for (let it of expr) {
         switch(it[1]) {
         case Types.OPERAND:
@@ -266,13 +282,12 @@ function solvePostfix(expr) {
             let a = stack.pop()[0];
             stack.push([opCallback.get(it[0])(a,b), Types.OPERAND]);
         }
-
     }
-    let result;
+
+    let result = String(stack[0][0]);
+
     if (pl) {
-        result = stack[0][0].toString().replace('.', ',');
-    } else {
-        result = stack[0][0];
+        result = result.replace('.', ',');
     }
 
     resultElm.innerText = "= " + result;
@@ -281,6 +296,7 @@ function solvePostfix(expr) {
 
 
 function PostToIn(expr) {
+
     let len = expr.length;
     let stack = [];
     for (let i=0; i<len; i++) {
@@ -292,13 +308,13 @@ function PostToIn(expr) {
             let a = stack.pop();
             stack.push({val: it, nodeA: a, nodeB: b});
         }
-
     }
+
     let tree = stack[0];
     let result = [];
     function unwind(node, parentPrec) {
         let prec = precedence(node.val[0]);
-        let brackets = parentPrec > prec ? true : false;
+        let brackets = parentPrec > prec;
         if (node.val[1] == Types.OPERATOR) {
             if (brackets) {
                 result.push(["(", Types.BRACKET]);
@@ -312,11 +328,13 @@ function PostToIn(expr) {
         } else {
             result.push(node.val);
         }
-
     }
+
     unwind(tree);
+
     return result;
 
 }
+
 
 infix();
