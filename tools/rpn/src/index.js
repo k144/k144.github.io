@@ -189,62 +189,10 @@ function infix() {
         clearAll();
         return;
     }
-    let s = infixElm.value.replaceAll(' ', '')
-    let tokenized = tokenize(s);
-    let stack = [];
-    let tokenizedPost = [];
-    let len = tokenized.length;
-    let tempTokenized = [tokenized[0]];
-
-    for (let i = 1; i<len; i++) {
-        // implicid multiplication
-        if (
-            (tokenized[i-1][0] == ")" && tokenized[i][1] == Types.OPERAND) ||
-            (tokenized[i-1][1] == Types.OPERAND && tokenized[i][0] == "(") ||
-            (tokenized[i-1][0] == ")" && tokenized[i][0] == "(")
-           ) {
-            tempTokenized.push(["*", Types.OPERATOR]);
-        }
-        tempTokenized.push(tokenized[i]);
-    }
-
-    tokenized = [...tempTokenized];
-    for (let it of tokenized) {
-        let val = it[0];
-        let top = stack[stack.length - 1];
-        if (it[1] == Types.OPERAND) {
-            tokenizedPost.push(it);
-        } else if (val == '(') {
-            stack.push(it);
-        } else if (val == ')') {
-            while (stack.length > 0 && top[0] != '(') {
-                tokenizedPost.push(stack.pop());
-                top = stack[stack.length - 1];
-            }
-            if (top[0] == '(') {
-                stack.pop();
-            }
-        } else {
-            while (stack.length > 0 && precedence(val) <= precedence(top[0])) {
-                tokenizedPost.push(stack.pop());
-                top = stack[stack.length - 1];
-            }
-            stack.push(it);
-        }
-    }
-
-    while (stack.length > 0) {
-        let elm = stack.pop();
-        if (elm[1] == Types.BRACKET) {
-            continue;
-        }
-        tokenizedPost.push(elm);
-    }
-
-    solvePostfix(tokenizedPost);
+    let tokenizedPost = InToPost(tokenize(infixElm.value));
     postfixElm.value = stackToStr(tokenizedPost);
     prefixElm.value = stackToStr(reverse(tokenizedPost));
-
+    solvePostfix(tokenizedPost);
 }
 
 
@@ -302,6 +250,61 @@ function solvePostfix(expr) {
 
 }
 
+function InToPost(expr) {
+
+    let stack = [];
+    let result = [];
+    let len = expr.length;
+    let tempTokenized = [expr[0]];
+
+    for (let i = 1; i<len; i++) {
+        // implicid multiplication
+        if (
+            (expr[i-1][0] == ")" && expr[i][1] == Types.OPERAND) ||
+            (expr[i-1][1] == Types.OPERAND && expr[i][0] == "(") ||
+            (expr[i-1][0] == ")" && expr[i][0] == "(")
+           ) {
+            tempTokenized.push(["*", Types.OPERATOR]);
+        }
+        tempTokenized.push(expr[i]);
+    }
+
+    expr = [...tempTokenized];
+    for (let it of expr) {
+        let val = it[0];
+        let top = stack[stack.length - 1];
+        if (it[1] == Types.OPERAND) {
+            result.push(it);
+        } else if (val == '(') {
+            stack.push(it);
+        } else if (val == ')') {
+            while (stack.length > 0 && top[0] != '(') {
+                result.push(stack.pop());
+                top = stack[stack.length - 1];
+            }
+            if (top[0] == '(') {
+                stack.pop();
+            }
+        } else {
+            while (stack.length > 0 && precedence(val) <= precedence(top[0])) {
+                result.push(stack.pop());
+                top = stack[stack.length - 1];
+            }
+            stack.push(it);
+        }
+    }
+
+    while (stack.length > 0) {
+        let elm = stack.pop();
+        if (elm[1] == Types.BRACKET) {
+            continue;
+        }
+        result.push(elm);
+    }
+
+    return result;
+
+}
 
 function PostToIn(expr) {
 
